@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth bg-[#08090C] text-[#EDEDED]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenParser (@greenparser_by_bot) — Профессиональный радар объявлений Kufar</title>
+  <meta name="description" content="Мгновенный мониторинг kufar.by в Telegram от 25 секунд. Минус-слова, отсечение магазинов, интеграция с CRM.">
+
+  <!-- Inter Display & Mono fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              DEFAULT: '#00DC82',
+              light: '#36E4DA',
+              glow: 'rgba(0, 220, 130, 0.15)',
+            },
+            obsidian: {
+              950: '#060709',
+              900: '#08090C',
+              800: '#0E1117',
+              700: '#161B22',
+              600: '#21262D',
+            }
+          },
+          letterSpacing: {
+            tighter: '-0.04em',
+            tight: '-0.02em',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Linear Grid Background */
+    .bg-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    }
+
+    /* Radial Spotlight */
+    .hero-spotlight {
+      background: radial-gradient(circle at 50% 0%, rgba(0, 220, 130, 0.12) 0%, rgba(54, 228, 218, 0.04) 35%, transparent 70%);
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: rgba(14, 17, 23, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .glass-panel:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Highlight Borders */
+    .linear-card {
+      position: relative;
+      background: #0E1117;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .linear-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 220, 130, 0.35);
+      box-shadow: 0 12px 30px -10px rgba(0, 220, 130, 0.08);
+    }
+
+    /* Radar Ping Animation */
+    @keyframes radarSweep {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .radar-pulse {
+      animation: radarSweep 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+  </style>
+</head>
+<body class="selection:bg-brand selection:text-black antialiased overflow-x-hidden font-sans">
+
+  <!-- Background Grids & Lights -->
+  <div class="fixed inset-0 bg-grid pointer-events-none -z-20"></div>
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[650px] hero-spotlight pointer-events-none -z-10"></div>
+
+  <!-- 1. HEADER -->
+  <header class="sticky top-4 z-40 max-w-5xl mx-auto px-4">
+    <div class="glass-panel rounded-full px-5 py-2.5 flex items-center justify-between shadow-2xl">
+      
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2.5 font-bold tracking-tight text-white group">
+        <div class="relative flex items-center justify-center w-7 h-7 rounded-lg bg-obsidian-700 border border-white/10 group-hover:border-brand/50 transition-colors">
+          <div class="w-2 h-2 rounded-full bg-brand"></div>
+          <div class="absolute inset-0 rounded-lg bg-brand/20 radar-pulse"></div>
+        </div>
+        <span class="text-sm font-semibold tracking-tight text-white">
+          Green<span class="text-brand">Parser</span>
+        </span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-7 text-xs font-medium text-neutral-400">
+        <a href="#how" class="hover:text-white transition-colors">Как работает</a>
+        <a href="#features" class="hover:text-white transition-colors">Возможности</a>
+        <a href="#audiences" class="hover:text-white transition-colors">Для кого</a>
+        <a href="#pricing" class="hover:text-white transition-colors">Тарифы</a>
+        <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+      </nav>
+
+      <!-- Bot Action -->
+      <a href="https://t.me/greenparser_by_bot" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-xs font-semibold px-4 py-1.5 rounded-full bg-white text-black hover:bg-neutral-200 transition-all hover:scale-105 active:scale-95 shadow-md">
+        <span>@greenparser_by_bot</span>
+        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
+
+    </div>
+  </header>
+
+  <!-- 2. HERO SECTION -->
+  <section class="pt-20 pb-16 md:pt-28 md:pb-24 px-6 text-center max-w-5xl mx-auto">
+    
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-obsidian-700/80 border border-white/10 text-neutral-300 text-xs font-mono mb-8 backdrop-blur-md">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-brand"></span>
+      </span>
+      <span>Скорость сканирования: <strong>~24.8 сек</strong></span>
+      <span class="text-neutral-600">|</span>
+      <span class="text-neutral-400">Резидентные прокси: 100% Online</span>
+    </div>
+
+    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tighter text-white mb-6 leading-[1.08]">
+      Забирайте маржинальные лоты <br class="hidden sm:inline">
+      до того, как их увидит <span class="bg-gradient-to-r from-brand via-brand-light to-white bg-clip-text text-transparent">рынок</span>.
+    </h1>
+
+    <p class="max-w-2xl mx-auto text-base sm:text-lg text-neutral-400 font-normal leading-relaxed mb-10 tracking-tight">
+      Профессиональный мониторинг kufar.by без задержек пуш-уведомлений. Автоматическая фильтрация перекупов, стоп-слова в описании и готовый CRM-пайплайн прямо в Telegram.
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-16">
+      <a href="https://t.me/greenparser_by_bot" target="_blank" rel="noopener" class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl bg-brand text-black font-semibold text-sm hover:bg-[#00F590] transition-all shadow-[0_0_30px_rgba(0,220,130,0.25)] hover:scale-[1.02]">
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+        <span>Подключить @greenparser_by_bot</span>
+      </a>
+      <a href="#how" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-obsidian-700/60 border border-white/10 text-neutral-300 font-medium text-sm hover:text-white hover:bg-obsidian-700 transition-colors">
+        Как это работает
+      </a>
+    </div>
+
+    <!-- 3. INTERACTIVE TELEGRAM MESSAGE MOCKUP -->
+    <div class="relative max-w-lg mx-auto text-left">
+      <div class="absolute -inset-2 bg-gradient-to-b from-brand/20 via-brand-light/5 to-transparent rounded-3xl blur-2xl opacity-60"></div>
+
+      <div class="relative bg-[#17212B] rounded-2xl border border-white/10 shadow-2xl p-4 sm:p-5 font-sans overflow-hidden">
+        
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/5 text-xs text-[#7E8C9A]">
+          <div class="flex items-center gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-brand/20 border border-brand/40 flex items-center justify-center text-brand font-bold text-[10px]">
+              GP
+            </div>
+            <div>
+              <span class="font-semibold text-white">GreenParser</span>
+              <span class="text-[11px] text-brand ml-1">✓ bot</span>
+            </div>
+          </div>
+          <span class="font-mono text-[11px]">14:22:04 (22 сек назад)</span>
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold text-[11px] border border-emerald-500/30">
+              ● Частное лицо
+            </span>
+            <span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 font-mono text-[11px] border border-cyan-500/20">
+              Минск, Фрунзенский
+            </span>
+            <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-[11px]">
+              🔥 Ниже рынка на ~40%
+            </span>
+          </div>
+
+          <div>
+            <h4 class="text-white font-bold text-base tracking-tight leading-snug">
+              Apple MacBook Pro 14" M2 Pro (16/512GB) Space Gray
+            </h4>
+            <div class="flex items-baseline gap-3 mt-1 font-mono">
+              <span class="text-xl font-bold text-brand">3 100 BYN</span>
+              <span class="text-xs text-neutral-500 line-through">~4 800 BYN</span>
+              <span class="text-xs text-emerald-400 font-sans font-semibold">+1 700 BYN спреда</span>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-lg bg-black/30 border border-white/5 text-xs text-neutral-300 leading-relaxed font-sans">
+            <span class="text-neutral-500 font-mono block mb-1">Выдержка из объявления:</span>
+            «Состояние нового, покупался в i-Store. Циклов 45, аккумулятор 99%. Полный комплект с коробкой и чеком. Продаю сегодня до вечера...»
+          </div>
+
+          <div class="flex items-center gap-2 text-[11px] font-mono text-neutral-400 pt-1">
+            <span class="text-brand font-bold">✓</span>
+            <span>Стоп-слова не обнаружены (битый / cloud / md / рассрочка)</span>
+          </div>
+
+          <!-- Dynamic Demo Action -->
+          <div class="grid grid-cols-2 gap-2 pt-2">
+            <button id="demo-take-btn" class="w-full py-2.5 px-3 rounded-lg bg-[#2481CC] hover:bg-[#2A8FE0] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-95">
+              <span id="demo-take-text">✋ Взять в работу (crm)</span>
+            </button>
+            <a href="https://kufar.by" target="_blank" rel="noopener" class="w-full py-2.5 px-3 rounded-lg bg-[#202B36] hover:bg-[#283644] border border-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+              <span>↗ Открыть лот Kufar</span>
+            </a>
+          </div>
+          <p class="text-[10px] text-center text-neutral-500 font-mono">Нажмите «Взять в работу» для проверки CRM-режима</p>
+
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- 3. HOW IT WORKS (3 Простых шага) -->
+  <section id="how" class="py-16 border-t border-white/5">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="text-left md:text-center max-w-xl mx-auto mb-12">
+        <p class="text-xs font-mono uppercase text-brand tracking-widest mb-2 font-semibold">// Онбординг</p>
+        <h2 class="text-3xl font-extrabold tracking-tight text-white">Старт мониторинга за 3 шага</h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="linear-card rounded-2xl p-6">
+          <div class="font-mono text-xs text-brand font-bold mb-3">[ 01 ]</div>
+          <h3 class="text-base font-bold text-white mb-2">Настройте фильтры на Kufar</h3>
+          <p class="text-xs text-neutral-400 leading-relaxed">
+            Зайдите на сайт kufar.by, выберите нужную категорию, город, год выпуска или ценовой диапазон и скопируйте URL.
+          </p>
+        </div>
+
+        <div class="linear-card rounded-2xl p-6">
+          <div class="font-mono text-xs text-brand font-bold mb-3">[ 02 ]</div>
+          <h3 class="text-base font-bold text-white mb-2">Отправьте ссылку боту</h3>
+          <p class="text-xs text-neutral-400 leading-relaxed">
+            Отправьте скопированный URL в диалог <span class="text-neutral-200">@greenparser_by_bot</span> и при необходимости укажите стоп-слова.
+          </p>
+        </div>
+
+        <div class="linear-card rounded-2xl p-6">
+          <div class="font-mono text-xs text-brand font-bold mb-3">[ 03 ]</div>
+          <h3 class="text-base font-bold text-white mb-2">Звоните первым продавцу</h3>
+          <p class="text-xs text-neutral-400 leading-relaxed">
+            Получайте карточку товара в Telegram через ~25 секунд после его публикации и забирайте выгодную сделку.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. COMPARISON -->
+  <section id="compare" class="py-20 border-t border-white/5 relative">
+    <div class="max-w-5xl mx-auto px-6">
+      
+      <div class="text-left md:text-center max-w-xl mx-auto mb-14">
+        <p class="text-xs font-mono uppercase text-brand tracking-widest mb-2 font-semibold">// Эффективность поиска</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">Разница между рутиной и преимуществом</h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        
+        <div class="linear-card rounded-2xl p-7 bg-obsidian-900 border-red-500/10 hover:border-red-500/30">
+          <div class="flex items-center justify-between pb-4 border-b border-white/5 mb-6">
+            <span class="text-sm font-bold text-red-400 uppercase tracking-wider font-mono">Стандартный мониторинг</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">Опоздание 100%</span>
+          </div>
+          <ul class="space-y-4 text-xs sm:text-sm text-neutral-400">
+            <li class="flex items-start gap-3">
+              <span class="text-red-400 font-mono font-bold">✕</span>
+              <span><strong>Оповещения с задержкой 30–60 минут:</strong> пока Куфар отправляет push, товар уже забирает перекупщик по звонку.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-red-400 font-mono font-bold">✕</span>
+              <span><strong>Шум коммерческих витрин:</strong> бесконечные одинаковые посты ломбардов, магазинов чехлов и ИП.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-red-400 font-mono font-bold">✕</span>
+              <span><strong>Скрытый неликвид:</strong> нет поиска по стоп-словам. Приходится открывать каждое объявление с «дефектом платы» или «на запчасти».</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="linear-card rounded-2xl p-7 bg-obsidian-800 border-brand/30 shadow-[0_0_40px_rgba(0,220,130,0.05)]">
+          <div class="flex items-center justify-between pb-4 border-b border-white/5 mb-6">
+            <span class="text-sm font-bold text-brand uppercase tracking-wider font-mono">GreenParser Бот</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-brand/10 text-brand border border-brand/30 font-mono">25 сек. реакция</span>
+          </div>
+          <ul class="space-y-4 text-xs sm:text-sm text-neutral-200">
+            <li class="flex items-start gap-3">
+              <span class="text-brand font-mono font-bold">✓</span>
+              <span><strong>Мгновенный сокет-парсинг:</strong> лот обрабатывается за 25 секунд с момента нажатия кнопки публикации продавцом.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-brand font-mono font-bold">✓</span>
+              <span><strong>Жесткий стоп-лист:</strong> автоматическая отбраковка слов вроде «битый», «копия», «трещина», «запчасти» и «не включается».</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-brand font-mono font-bold">✓</span>
+              <span><strong>Исключение юрлиц:</strong> отсекает аккаунты компаний, оставляя исключительно чистых частных продавцов.</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. BENTO GRID -->
+  <section id="audiences" class="py-20 border-t border-white/5">
+    <div class="max-w-6xl mx-auto px-6">
+      
+      <div class="text-left md:text-center max-w-xl mx-auto mb-16">
+        <p class="text-xs font-mono uppercase text-brand tracking-widest mb-2 font-semibold">// Сегментация</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">Решение под вашу бизнес-модель</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="linear-card rounded-2xl p-8 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <span class="font-mono text-xs text-neutral-400">01 / Личный подбор</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-white/5 text-neutral-300">FREE</span>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Для себя</h3>
+            <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed mb-6">
+              Ищете один конкретный автомобиль, видеокарту, детскую коляску или кофемашину со скидкой 50% без спекулятивной наценки.
+            </p>
+          </div>
+          <div class="p-3 rounded-xl bg-obsidian-950 border border-white/5 font-mono text-[11px] text-neutral-400">
+            • 2 активные ссылки поиска<br>
+            • Фильтр минус-слов включен<br>
+            • Моментальные push-оповещения
+          </div>
+        </div>
+
+        <div class="linear-card rounded-2xl p-8 flex flex-col justify-between border-brand/40 bg-gradient-to-b from-obsidian-800 to-obsidian-900">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <span class="font-mono text-xs text-brand">02 / Профессионалы</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-brand/15 text-brand font-bold border border-brand/30">PRO</span>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Перекупщикам и подборщикам</h3>
+            <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed mb-6">
+              Техника Apple, ноутбуки, автозапчасти, шины, спецтехника. Фильтрация магазинов, стоп-слова и секундные задержки для первого дозвона.
+            </p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-obsidian-950 border border-brand/20 font-mono text-[11px] text-brand">
+            $ Срок окупаемости тарифа: 1 удачная перепродажа телефона или комплекта резины.
+          </div>
+        </div>
+
+        <div class="linear-card rounded-2xl p-8 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <span class="font-mono text-xs text-cyan-400">03 / Организации</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-400/10 text-cyan-300 border border-cyan-400/20">BUSINESS</span>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Скупкам и агентствам</h3>
+            <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed mb-6">
+              Ломбарды, автохаусы, агентства недвижимости. Командная лента в супергруппах, статус «В работе» и Webhook в CRM.
+            </p>
+          </div>
+          
+          <div class="rounded-xl bg-obsidian-950 p-3 border border-white/5 font-mono text-[10px] text-neutral-400 overflow-x-auto">
+            <span class="text-cyan-400">POST</span> /api/v1/lead<br>
+            { "price": 3100, "fast_deal": true }
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 6. FEATURES -->
+  <section id="features" class="py-20 border-t border-white/5">
+    <div class="max-w-6xl mx-auto px-6">
+      
+      <div class="text-left md:text-center max-w-xl mx-auto mb-16">
+        <p class="text-xs font-mono uppercase text-brand tracking-widest mb-2 font-semibold">// Технологии парсинга</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">Инструменты, которых нет на Kufar</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        
+        <div class="linear-card rounded-xl p-6">
+          <div class="w-8 h-8 rounded-lg bg-brand/10 border border-brand/20 flex items-center justify-center text-brand font-mono text-xs font-bold">25s</div>
+          <h4 class="text-base font-semibold text-white mb-2">Турбо-интервал 25 секунд</h4>
+          <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+            Мониторинг через резидентные прокси Республики Беларусь без капч, 403-ошибок и замедлений со стороны маркетплейса.
+          </p>
+        </div>
+
+        <div class="linear-card rounded-xl p-6">
+          <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 font-mono text-xs">!#</div>
+          <h4 class="text-base font-semibold text-white mb-2">Минус-слова (Стоп-лист)</h4>
+          <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+            Отсекайте слова: «битый», «копия», «треснут», «с дефектом», «под заказ». На Куфаре этот фильтр физически отсутствует.
+          </p>
+        </div>
+
+        <div class="linear-card rounded-xl p-6">
+          <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 font-mono text-xs">P2P</div>
+          <h4 class="text-base font-semibold text-white mb-2">Анти-магазин фильтр</h4>
+          <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+            Скрывайте витрины магазинов, оптовиков и коммерческие учетные записи в один клик. Работайте только с частниками.
+          </p>
+        </div>
+
+        <div class="linear-card rounded-xl p-6">
+          <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 font-mono text-xs">CRM</div>
+          <h4 class="text-base font-semibold text-white mb-2">Командный антидубль</h4>
+          <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+            Бот отправляет лот в групповой чат. Менеджер жмет «Взять в работу», и бот фиксирует лид, исключая дубликаты звонков.
+          </p>
+        </div>
+
+        <div class="linear-card rounded-xl p-6">
+          <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 font-mono text-xs">API</div>
+          <h4 class="text-base font-semibold text-white mb-2">Webhook для amoCRM и Bitrix24</h4>
+          <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+            Мгновенная передача карточки товара, контактов и цены прямо в воронку вашей CRM-системы или Google Таблицы.
+          </p>
+        </div>
+
+        <div class="linear-card rounded-xl p-6">
+          <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-300 font-mono text-xs">⭐️</div>
+          <h4 class="text-base font-semibold text-white mb-2">Оплата в Telegram Stars</h4>
+          <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+            Подписка оплачивается официальными звездами Telegram без ввода банковских карт. Управление в профиле мессенджера.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 7. PRICING -->
+  <section id="pricing" class="py-20 border-t border-white/5">
+    <div class="max-w-6xl mx-auto px-6">
+      
+      <div class="text-center max-w-xl mx-auto mb-12">
+        <p class="text-xs font-mono uppercase text-brand tracking-widest mb-2 font-semibold">// Тарификация</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-6">Прозрачные условия подписки</h2>
+        
+        <div class="inline-flex items-center p-1 rounded-xl bg-obsidian-800 border border-white/10 text-xs font-mono">
+          <button id="btn-byn" class="px-3.5 py-1.5 rounded-lg bg-brand text-black font-semibold transition-all">В рублях (BYN)</button>
+          <button id="btn-stars" class="px-3.5 py-1.5 rounded-lg text-neutral-400 hover:text-white transition-all">Telegram Stars ⭐️</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        
+        <!-- FREE -->
+        <div class="linear-card rounded-2xl p-8 flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="font-bold text-white text-lg">FREE</span>
+              <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-white/5 text-neutral-400 whitespace-nowrap">Базовый</span>
+            </div>
+            
+            <div class="mb-6">
+              <div class="h-5 flex items-center mb-1">
+                <span class="text-[11px] font-mono text-neutral-500">Без привязки карты</span>
+              </div>
+              <div class="flex items-baseline gap-1.5 font-mono">
+                <span class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight whitespace-nowrap">0</span>
+                <span class="text-sm font-normal text-neutral-400 font-sans whitespace-nowrap">BYN / навсегда</span>
+              </div>
+            </div>
+
+            <ul class="space-y-3.5 text-xs sm:text-sm text-neutral-400 mb-8">
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span><strong>2</strong> поисковые ссылки</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>Проверка каждые 15 минут</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span><strong>Фильтр минус-слов (стоп-слова)</strong></span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>До 30 уведомлений в сутки</span>
+              </li>
+              <li class="flex items-center gap-2.5 text-neutral-600 line-through">
+                <span>✕</span>
+                <span>Скрытие магазинов и ИП</span>
+              </li>
+            </ul>
+          </div>
+          <a href="https://t.me/greenparser_by_bot" target="_blank" rel="noopener" class="w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold text-center text-xs tracking-tight transition-all block">
+            Запустить Free
+          </a>
+        </div>
+
+        <!-- PRO (20 BYN) -->
+        <div class="linear-card rounded-2xl p-8 flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="font-bold text-white text-lg">PRO</span>
+              <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-brand/10 text-brand border border-brand/20 whitespace-nowrap">Для перекупа</span>
+            </div>
+            
+            <div class="price-byn mb-6">
+              <div class="h-5 flex items-center gap-2 mb-1">
+                <span class="text-xs text-neutral-500 line-through font-mono">30 BYN</span>
+                <span class="text-[10px] font-sans font-bold text-brand px-1.5 py-0.5 rounded bg-brand/10 border border-brand/20">-33%</span>
+              </div>
+              <div class="flex items-baseline gap-1.5 font-mono">
+                <span class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight whitespace-nowrap">20</span>
+                <span class="text-sm font-normal text-neutral-400 font-sans whitespace-nowrap">BYN / месяц</span>
+              </div>
+            </div>
+
+            <div class="price-stars hidden mb-6">
+              <div class="h-5 flex items-center gap-2 mb-1">
+                <span class="text-xs text-neutral-500 line-through font-mono">490&nbsp;⭐️</span>
+                <span class="text-[10px] font-sans font-bold text-brand px-1.5 py-0.5 rounded bg-brand/10 border border-brand/20">-33%</span>
+              </div>
+              <div class="flex items-baseline gap-1.5 font-mono">
+                <span class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight whitespace-nowrap">330</span>
+                <span class="text-sm font-normal text-amber-400 font-sans whitespace-nowrap">⭐️ Stars / мес</span>
+              </div>
+            </div>
+
+            <ul class="space-y-3.5 text-xs sm:text-sm text-neutral-300 mb-8">
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span><strong>10</strong> поисковых ссылок</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>Интервал проверки: <strong>1 минута</strong></span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>Фильтр минус-слов (полный)</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>Скрытие магазинов и ИП</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>Безлимит уведомлений</span>
+              </li>
+            </ul>
+          </div>
+          <a href="https://t.me/greenparser_by_bot" target="_blank" rel="noopener" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-center text-xs tracking-tight transition-all block">
+            Подключить PRO
+          </a>
+        </div>
+
+        <!-- BUSINESS (90 BYN) -->
+        <div class="linear-card rounded-2xl p-8 flex flex-col justify-between border-brand bg-gradient-to-b from-[#0E1513] to-obsidian-900 shadow-[0_0_50px_rgba(0,220,130,0.12)] relative">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-brand text-black text-[10px] font-bold font-mono tracking-wider uppercase whitespace-nowrap">
+            Максимальная скорость
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="font-bold text-white text-lg">BUSINESS</span>
+              <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-brand/20 text-brand whitespace-nowrap">CRM & Команды</span>
+            </div>
+
+            <div class="price-byn mb-6">
+              <div class="h-5 flex items-center gap-2 mb-1">
+                <span class="text-xs text-neutral-500 line-through font-mono">100 BYN</span>
+                <span class="text-[10px] font-sans font-bold text-brand px-1.5 py-0.5 rounded bg-brand/10 border border-brand/20">-10%</span>
+              </div>
+              <div class="flex items-baseline gap-1.5 font-mono">
+                <span class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight whitespace-nowrap">90</span>
+                <span class="text-sm font-normal text-neutral-400 font-sans whitespace-nowrap">BYN / месяц</span>
+              </div>
+            </div>
+
+            <div class="price-stars hidden mb-6">
+              <div class="h-5 flex items-center gap-2 mb-1">
+                <span class="text-xs text-neutral-500 line-through font-mono">1&nbsp;590&nbsp;⭐️</span>
+                <span class="text-[10px] font-sans font-bold text-brand px-1.5 py-0.5 rounded bg-brand/10 border border-brand/20">-10%</span>
+              </div>
+              <div class="flex items-baseline gap-1.5 font-mono">
+                <span class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight whitespace-nowrap">1&nbsp;430</span>
+                <span class="text-sm font-normal text-amber-400 font-sans whitespace-nowrap">⭐️ Stars / мес</span>
+              </div>
+            </div>
+
+            <ul class="space-y-3.5 text-xs sm:text-sm text-neutral-200 mb-8">
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>До <strong>50</strong> поисковых ссылок</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>Турбо-режим: <strong>25 секунд</strong></span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>Работа в рабочих супергруппах</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>Кнопка «Взять в работу» сотрудникам</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>Webhook (amoCRM, Bitrix24, Sheets)</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-brand font-bold">✓</span>
+                <span>Выделенная прокси-линия</span>
+              </li>
+            </ul>
+          </div>
+          <a href="https://t.me/greenparser_by_bot" target="_blank" rel="noopener" class="w-full py-3.5 rounded-xl bg-brand text-black font-bold text-center text-xs tracking-tight hover:bg-[#00F590] transition-all block shadow-lg shadow-brand/20">
+            Оформить Business
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 8. FAQ ACCORDION -->
+  <section id="faq" class="py-20 border-t border-white/5">
+    <div class="max-w-3xl mx-auto px-6">
+      
+      <div class="text-left md:text-center max-w-xl mx-auto mb-14">
+        <p class="text-xs font-mono uppercase text-brand tracking-widest mb-2 font-semibold">// База знаний</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">Частые вопросы</h2>
+      </div>
+
+      <div class="space-y-3" id="faq-list">
+        
+        <div class="linear-card rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full p-5 text-left font-semibold text-sm text-white flex justify-between items-center gap-4 hover:text-brand transition-colors">
+            <span>Нужно ли устанавливать отдельный софт на компьютер или смартфон?</span>
+            <span class="faq-sign font-mono text-neutral-500 text-lg">+</span>
+          </button>
+          <div class="faq-drawer hidden px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-white/5 pt-3">
+            Нет. Вся работа происходит исключительно внутри Telegram. Бот работает в облаке на серверах 24/7, даже когда ваш телефон выключен.
+          </div>
+        </div>
+
+        <div class="linear-card rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full p-5 text-left font-semibold text-sm text-white flex justify-between items-center gap-4 hover:text-brand transition-colors">
+            <span>Как добавить нужную категорию или поисковый запрос?</span>
+            <span class="faq-sign font-mono text-neutral-500 text-lg">+</span>
+          </button>
+          <div class="faq-drawer hidden px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-white/5 pt-3">
+            Перейдите на сайт kufar.by, выставьте нужные фильтры (цену, регион, состояние) и скопируйте URL из адресной строки браузера. Отправьте эту ссылку боту в диалог — мониторинг начнется моментально.
+          </div>
+        </div>
+
+        <div class="linear-card rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full p-5 text-left font-semibold text-sm text-white flex justify-between items-center gap-4 hover:text-brand transition-colors">
+            <span>Как происходит оплата звёздами Telegram Stars?</span>
+            <span class="faq-sign font-mono text-neutral-500 text-lg">+</span>
+          </button>
+          <div class="faq-drawer hidden px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-white/5 pt-3">
+            Оплата производится встроенными Stars мессенджера Telegram. Подписка списывается автоматически каждые 30 дней. Отменить ее можно в один тап в меню настроек Telegram.
+          </div>
+        </div>
+
+        <div class="linear-card rounded-xl overflow-hidden">
+          <button class="faq-toggle w-full p-5 text-left font-semibold text-sm text-white flex justify-between items-center gap-4 hover:text-brand transition-colors">
+            <span>Можно ли подключить бота в закрытый чат отдела продаж?</span>
+            <span class="faq-sign font-mono text-neutral-500 text-lg">+</span>
+          </button>
+          <div class="faq-drawer hidden px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-white/5 pt-3">
+            Да, на тарифе BUSINESS вы можете добавить бота прямо в супергруппу вашей команды. Все сотрудники смогут видеть поток новых лотов и закреплять их за собой интерактивной кнопкой.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 9. FOOTER -->
+  <footer class="border-t border-white/5 py-12 text-xs text-neutral-500">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+      
+      <div class="flex items-center gap-3">
+        <div class="w-6 h-6 rounded bg-brand/10 border border-brand/30 flex items-center justify-center text-brand font-bold text-[10px]">
+          GP
+        </div>
+        <span class="text-neutral-300 font-semibold">GreenParser (@greenparser_by_bot)</span>
+        <span class="text-neutral-700">/</span>
+        <span>© 2026. Не аффилирован с kufar.by.</span>
+      </div>
+
+      <div class="flex items-center gap-6 text-neutral-400">
+        <a href="https://t.me/greenparser_by_bot" target="_blank" rel="noopener" class="hover:text-white transition-colors">Telegram-бот</a>
+        <button id="open-privacy-btn" class="hover:text-white transition-colors text-left underline underline-offset-4 decoration-neutral-700 hover:decoration-white">Политика конфиденциальности</button>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- 10. PRIVACY POLICY MODAL -->
+  <div id="privacy-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md transition-all">
+    <div class="relative w-full max-w-2xl bg-obsidian-900 border border-white/10 rounded-2xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden">
+      
+      <div class="p-6 border-b border-white/5 flex items-center justify-between bg-obsidian-950">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-brand"></span>
+          <h3 class="font-bold text-white text-base">Политика конфиденциальности сервиса «GreenParser»</h3>
+        </div>
+        <button id="close-privacy-btn" class="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto text-xs sm:text-sm text-neutral-300 space-y-4 leading-relaxed font-sans">
+        
+        <div>
+          <h4 class="font-semibold text-white mb-1 text-sm">1. Общие положения</h4>
+          <p class="text-neutral-400">Настоящая Политика регламентирует обработку технической информации Telegram-ботом <strong>@greenparser_by_bot</strong> («Сервис»). Сервис предоставляет функции автоматизированного анализа общедоступных объявлений торговой площадки kufar.by.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-white mb-1 text-sm">2. Собираемые данные</h4>
+          <p class="text-neutral-400 mb-2">Сервис собирает и хранит исключительно минимальный технический набор данных, необходимый для предоставления услуги:</p>
+          <ul class="list-disc list-inside space-y-1 text-neutral-400 pl-2">
+            <li>Уникальный идентификатор Telegram (Telegram User ID) и никнейм (username);</li>
+            <li>Поисковые URL-ссылки и фильтры минус-слов, добавленные пользователем;</li>
+            <li>Идентификаторы супергрупп Telegram (в случае использования тарифа Business).</li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-white mb-1 text-sm">3. Платежные и банковские данные</h4>
+          <p class="text-neutral-400">Сервис не запрашивает, не обрабатывает и не хранит реквизиты банковских карт. Все транзакции осуществляются непосредственно через защищенную инфраструктуру мессенджера Telegram (Telegram Stars) либо через сертифицированных провайдеров платежей. Серверная часть бота получает лишь цифровой статус подтверждения оплаты.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-white mb-1 text-sm">4. Использование данных</h4>
+          <p class="text-neutral-400">Информация используется строго для передачи push-уведомлений о появлении новых объявлений согласно персональным фильтрам пользователя. Данные ни при каких обстоятельствах не передаются третьим лицам.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-white mb-1 text-sm">5. Отказ от аффилированности</h4>
+          <p class="text-neutral-400">Сервис «GreenParser» является независимым инструментом мониторинга и не связан, не спонсируется и не аффилирован с торговой площадкой Kufar или ее владельцами (Adevinta / ООО «Куфар»). Все товарные знаки принадлежат их правообладателям.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-white mb-1 text-sm">6. Удаление данных</h4>
+          <p class="text-neutral-400">Пользователь вправе удалить все свои поисковые ссылки и данные в любой момент, отправив команду останова / сброса настроек непосредственно в диалоге с @greenparser_by_bot.</p>
+        </div>
+
+      </div>
+
+      <div class="p-4 border-t border-white/5 bg-obsidian-950 flex justify-end">
+        <button id="close-privacy-btn-bottom" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors">
+          Понятно, закрыть
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Vanilla Scripts -->
+  <script>
+    // 1. Currency Switcher (BYN vs Stars)
+    const btnByn = document.getElementById('btn-byn');
+    const btnStars = document.getElementById('btn-stars');
+    const pricesByn = document.querySelectorAll('.price-byn');
+    const pricesStars = document.querySelectorAll('.price-stars');
+
+    btnByn.addEventListener('click', () => {
+      btnByn.classList.add('bg-brand', 'text-black', 'font-semibold');
+      btnByn.classList.remove('text-neutral-400');
+      btnStars.classList.remove('bg-brand', 'text-black', 'font-semibold');
+      btnStars.classList.add('text-neutral-400');
+
+      pricesByn.forEach(el => el.classList.remove('hidden'));
+      pricesStars.forEach(el => el.classList.add('hidden'));
+    });
+
+    btnStars.addEventListener('click', () => {
+      btnStars.classList.add('bg-brand', 'text-black', 'font-semibold');
+      btnStars.classList.remove('text-neutral-400');
+      btnByn.classList.remove('bg-brand', 'text-black', 'font-semibold');
+      btnByn.classList.add('text-neutral-400');
+
+      pricesStars.forEach(el => el.classList.remove('hidden'));
+      pricesByn.forEach(el => el.classList.add('hidden'));
+    });
+
+    // 2. Interactive Mockup Action
+    const demoTakeBtn = document.getElementById('demo-take-btn');
+    const demoTakeText = document.getElementById('demo-take-text');
+    let isTaken = false;
+
+    demoTakeBtn.addEventListener('click', () => {
+      isTaken = !isTaken;
+      if (isTaken) {
+        demoTakeBtn.classList.remove('bg-[#2481CC]', 'hover:bg-[#2A8FE0]');
+        demoTakeBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-500');
+        demoTakeText.textContent = '✓ Взято в CRM (Менеджер 1)';
+      } else {
+        demoTakeBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-500');
+        demoTakeBtn.classList.add('bg-[#2481CC]', 'hover:bg-[#2A8FE0]');
+        demoTakeText.textContent = '✋ Взять в работу (crm)';
+      }
+    });
+
+    // 3. FAQ Accordion
+    document.querySelectorAll('.faq-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const drawer = btn.nextElementSibling;
+        const sign = btn.querySelector('.faq-sign');
+        const isOpen = !drawer.classList.contains('hidden');
+
+        document.querySelectorAll('.faq-drawer').forEach(d => d.classList.add('hidden'));
+        document.querySelectorAll('.faq-sign').forEach(s => s.textContent = '+');
+
+        if (!isOpen) {
+          drawer.classList.remove('hidden');
+          sign.textContent = '—';
+        }
+      });
+    });
+
+    // 4. Privacy Policy Modal Logic
+    const privacyModal = document.getElementById('privacy-modal');
+    const openPrivacyBtn = document.getElementById('open-privacy-btn');
+    const closePrivacyBtn = document.getElementById('close-privacy-btn');
+    const closePrivacyBtnBottom = document.getElementById('close-privacy-btn-bottom');
+
+    const openModal = () => {
+      privacyModal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    };
+
+    const closeModal = () => {
+      privacyModal.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    };
+
+    openPrivacyBtn.addEventListener('click', openModal);
+    closePrivacyBtn.addEventListener('click', closeModal);
+    closePrivacyBtnBottom.addEventListener('click', closeModal);
+
+    privacyModal.addEventListener('click', (e) => {
+      if (e.target === privacyModal) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !privacyModal.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+  </script>
+
+</body>
+</html>
